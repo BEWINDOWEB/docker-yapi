@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  yapi:
+    image: bewindoweb/yapi:1.0.0
+    environment:
+      YAPI_VERSION: "1.8.5"
+      YAPI_DB_SERVER_NAME: "mongo"
+      YAPI_DB_USER: "yapidba"
+      YAPI_DB_PASS: "123456"
+    volumes:
+      - "/opt/yapi/vendors/log:/opt/yapi/vendors/log"
+    ports:
+      - 9233:9233
+    networks: 
+      - default
+      - my_docker_net
+    
+
+networks: 
+  my_docker_net: 
+    external: true

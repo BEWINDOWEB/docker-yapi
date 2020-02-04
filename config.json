@@ -1,0 +1,37 @@
+{
+  "port": "YAPI_PORT",
+  "adminAccount": "YAPI_ADMIN_ACCOUNT",
+  "adminPassword": "YAPI_ADMIN_PASSWORD",
+  "closeRegister":YAPI_CLOSE_REGISTER,
+  "db": {
+    "connectString": "YAPI_DB_CONNECT_STRING",
+    "servername": "YAPI_DB_SERVER_NAME",
+    "DATABASE": "YAPI_DB_DATABASE",
+    "port": YAPI_DB_PORT,
+    "user": "YAPI_DB_USER",
+    "pass": "YAPI_DB_PASS",
+    "authSource": "YAPI_DB_AUTH_SOURCE"
+  },
+  "mail": {
+    "enable": YAPI_MAIL_ENABLE,
+    "host": "YAPI_MAIL_HOST",
+    "port": YAPI_MAIL_PORT,
+    "from": "YAPI_MAIL_FROM",
+    "auth": {
+      "user": "YAPI_MAIL_AUTH_USER",
+      "pass": "YAPI_MAIL_AUTH_PASS"
+    }
+  },
+  "ldapLogin":{
+    "enable":YAPI_LDAP_LOGIN_ENABLE,
+	"server":"YAPI_LDAP_LOGIN_SERVER",
+	"baseDn":"YAPI_LDAP_LOGIN_BASE_DN",
+	"bindPassword":"YAPI_LDAP_LOGIN_BIND_PASSWORD",
+	"searchDn":"YAPI_LDAP_LOGIN_SEARCH_DN",
+	"searchStandard":"YAPI_LDAP_LOGIN_SEARCH_STANDARD",
+	"emailPostfix":"YAPI_LDAP_LOGIN_EMAIL_POSTFIX",
+	"emailKey":"YAPI_LDAP_LOGIN_EMAIL_KEY",
+	"usernameKey":"YAPI_LDAP_LOGIN_USERNAME_KEY"
+  },
+  "plugins":[]
+}

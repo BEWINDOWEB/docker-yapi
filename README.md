@@ -32,14 +32,20 @@
 | 支持YAPI插件 | ✖ 后续会调试和支持 |
 | 支持YAPI数据备份 | ✖ 后续会调试和支持 |
 
-## 1.2 运行和配置mongo
+## 1.2 创建docker网络
+如果已经存在，则不必再次创建
+```
+docker network create my_docker_net
+```
 
-### 1.2.1 运行mongo
+## 1.3 运行和配置mongo
+
+### 1.3.1 运行mongo
 yapi依赖mongo，如果维护有mongo集群，可以直接使用；如果没有，可以用[mongo/mongo.yml](mongo/mongo.yml)启动mongo：
 ```bash
-wget https://github.com/BEWINDOWEB/docker-yapi/archive/v1.0.0.zip
-tar -zxvf v1.0.0.zip ./yapi
-cd yapi/mongo
+wget https://github.com/BEWINDOWEB/docker-yapi/archive/v1.0.0.tar.gz
+tar -zxvf v1.0.0.zip
+cd docker-yapi-1.0.0/mongo
 docker-compose -f mongo.yml up -d
 ```
 > 
@@ -49,9 +55,10 @@ docker-compose -f mongo.yml up -d
 > * mongo的数据挂载在`/opt/mongo`目录下
 > * [mongo镜像](https://hub.docker.com/_/mongo)，[mongo-express镜像](https://hub.docker.com/_/mongo-express)
 
-### 1.2.2 配置yapi相关数据
+### 1.3.2 配置yapi相关数据
 yapi需要一个管理数据库的用户，可以通过如下命令创建：
 ```bash
+docker ps
 docker exec -it xxxxxx /bin/bash # 进入mongo容器，其中xxxx是容器的container_id
 mongo # 使用mongo客户端
 use admin # 使用admin数据库
@@ -73,14 +80,9 @@ db.createUser({
 > * 创建的用户：用户名`yapiDatabaseAdmin`, 密码`123456`，强烈建议修改。
 > * 该用户权限为数据库`yapi`的`readWrite`权限，其中`yapi`应与后面的`YAPI_DB_DATABASE`值保持一致
 
-## 1.3 运行docker-yapi
+## 1.4 运行docker-yapi
 
-### 1.3.1 拉取镜像
-```bash
-docker pull bewindoweb/yapi:latest
-```
-
-### 1.3.2 修改docker环境变量
+### 1.4.1 修改docker环境变量
 ```bash
 cd yapi
 vi docker-compose.yml
@@ -89,18 +91,19 @@ vi docker-compose.yml
 > * docker-compose配置文件在[docker-compose.yml](docker-compose.yml)
 > * 注意有的参数带引号，有的不带引号
 
-#### 1.3.2.1 基本配置
+#### 1.4.1.1 基本配置
 
 | 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
+| YAPI_MODE | YAPI模式 | DEFAULT | ✔ | 【自定义配置】DEFAULT：第一次启动之后，之后的启动不再执行安装命令，修改配置将不会生效<br>REINSTALL：修改任意配置之后（比如改变管理员密码），重新安装一次 |
+| YAPI_VERSION | YAPI版本号 | 1.8.5 | - | 【自定义配置】目前仅作展示，暂不支持更新版本 |
 | YAPI_PORT | 端口 | 9233 | - | |
 | YAPI_ADMIN_ACCOUNT | 管理员邮箱 | "yapiAdmin@example.com" | ✔ | |
 | YAPI_ADMIN_PASSWORD | 管理员密码 | "yapiAdminPassword" | ✔ | 【自定义配置】相比于原生yapi，增加了密码配置功能，可设置密码 |
 | YAPI_CLOSE_REGISTER | 是否关闭注册 | true | ✔ | 建议关闭注册（true），采用LDAP的形式登录 |
-| YAPI_VERSION | YAPI版本号 | 1.8.5 | - | 【自定义配置】目前仅作展示，暂不支持更新版本 |
-| YAPI_MODE | YAPI模式 | DEFAULT | ✔ | 【自定义配置】DEFAULT：第一次启动之后，之后的启动不再执行安装命令，修改配置将不会生效<br>REINSTALL：修改任意配置之后（比如改变管理员密码），重新安装一次 |
 
-#### 1.3.2.2 mongo数据库配置
+
+#### 1.4.1.2 mongo数据库配置
 | 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_DB_CONNECT_STRING | MongoDB集群连接字符串 | 空 | ✔ | 如果mongo是单实例，则不用填写；如果是集群模式，则需要填写。<br>示例：mongodb://127.0.0.100:8418,127.0.0.101:8418,127.0.0.102:8418/yapidb?slaveOk=true |
@@ -111,7 +114,7 @@ vi docker-compose.yml
 | YAPI_DB_PASS | MongoDB操作yapi数据库的密码 | 123456 | ✔ | |
 | YAPI_DB_AUTH | MongoDB身份校验数据库名 | admin | - | |
 
-#### 1.3.2.3 邮箱配置
+#### 1.4.1.3 邮箱配置
 | 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_MAIL_ENABLE | 是否启用邮箱功能 | false | ✔ | 如果该项为false，则后面所有配置不生效 |
@@ -124,7 +127,7 @@ vi docker-compose.yml
 > [如何开通电子邮箱的SMTP功能](https://jingyan.baidu.com/article/fdbd42771da9b0b89e3f48a8.html)
 
 
-#### 1.3.2.4 LDAP配置
+#### 1.4.1.4 LDAP配置
 | 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_LDAP_LOGIN_ENABLE | 是否支持LDAP登录 | false | ✔ | 如果该项为false，则后面所有配置不生效 |
@@ -139,13 +142,13 @@ vi docker-compose.yml
 
 > [YAPI官方关于LDAP参数说明](https://hellosean1025.github.io/yapi/devops/index.html#%e9%85%8d%e7%bd%aeldap%e7%99%bb%e5%bd%95)
 
-#### 1.3.2.5 暂不支持的配置
+#### 1.4.1.5 暂不支持的配置
 | 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_PLUGIN | YAPI插件列表 | 空 | - | 目前安装插件会出现`ESLint Configuration not exist`的错误，暂未解决 |
 > [YAPI插件列表](https://www.npmjs.com/search?q=yapi-plugin-)
 
-### 1.3.3 运行yapi容器
+### 1.4.2 运行yapi容器
 ```bash
 docker-compose -f docker-compose.yml up -d
 ```

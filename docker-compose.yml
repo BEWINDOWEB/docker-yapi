@@ -4,11 +4,46 @@ services:
 
   yapi:
     image: bewindoweb/yapi:1.0.0
+    restart: always
     environment:
-      YAPI_VERSION: "1.8.5"
+      # [1] base settings
+      # YAPI_MODE: "DEFAULT"
+      # YAPI_PORT: "9233"
+      # YAPI_VERSION: "1.8.5"
+      YAPI_ADMIN_ACCOUNT: "yapiAdmin@example.com"
+      YAPI_ADMIN_PASSWORD: "yapiAdminPassword"
+      YAPI_CLOSE_REGISTER: "true"
+      
+      # [2] mongo db
+      # YAPI_DB_CONNECT_STRING: "mongodb://127.0.0.100:8418,127.0.0.101:8418,127.0.0.102:8418/yapidb?slaveOk=true"
       YAPI_DB_SERVER_NAME: "mongo"
-      YAPI_DB_USER: "yapidba"
+      # YAPI_DB_DATABASE: "yapi"
+      # YAPI_DB_PORT: "27017"
+      YAPI_DB_USER: "yapiDatabaseAdmin"
       YAPI_DB_PASS: "123456"
+      # YAPI_DB_AUTH: "admin"
+      
+      # [3] email
+      YAPI_MAIL_ENABLE: "false"
+      # YAPI_MAIL_HOST: "smtp.163.com"
+      # YAPI_MAIL_PORT: "465"
+      # YAPI_MAIL_FROM: "yapiMailSender@163.com"
+      # YAPI_MAIL_AUTH_USER: "yapiMailAdmin@163.com"
+      # YAPI_MAIL_AUTH_PASS: "yapiMailPassword"
+      
+      # [4] ldap
+      YAPI_LDAP_LOGIN_ENABLE: "false"
+      # YAPI_LDAP_LOGIN_SERVER: "ldap://ldapServer:389"
+      # YAPI_LDAP_LOGIN_BASE_DN: "cn=Manager,dc=example,dc=com"
+      # YAPI_LDAP_LOGIN_BIND_PASSWORD: "123456"
+      # YAPI_LDAP_LOGIN_SEARCH_DN: "dc=example,dc=com"
+      # YAPI_LDAP_LOGIN_SEARCH_STANDARD: "mail"
+      # YAPI_LDAP_LOGIN_EMAIL_POSTFIX: "@example.com"
+      # YAPI_LDAP_LOGIN_EMAIL_KEY: "mail"
+      # YAPI_LDAP_LOGIN_USERNAME_KEY: "description"
+      
+      # [5] unsupported
+      # YAPI_PLUGIN: ""
     volumes:
       - "/opt/yapi/vendors/log:/opt/yapi/vendors/log"
     ports:

@@ -5,6 +5,7 @@
 
 * [YAPI github](https://github.com/YMFE/yapi)
 * [YAPI 官方文档](https://hellosean1025.github.io/yapi/)
+* [hub.docker.com: bewindoweb/yapi](https://hub.docker.com/repository/docker/bewindoweb/yapi)
 
 | 环境 | 说明 | 测试可用 |
 | --- | --- | --- |

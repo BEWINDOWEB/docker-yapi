@@ -37,6 +37,9 @@
 ### 1.2.1 运行mongo
 yapi依赖mongo，如果维护有mongo集群，可以直接使用；如果没有，可以用[mongo/mongo.yml](mongo/mongo.yml)启动mongo：
 ```bash
+wget https://github.com/BEWINDOWEB/docker-yapi/archive/v1.0.0.zip
+tar -zxvf v1.0.0.zip ./yapi
+cd yapi/mongo
 docker-compose -f mongo.yml up -d
 ```
 > 
@@ -78,6 +81,11 @@ docker pull bewindoweb/yapi:latest
 ```
 
 ### 1.3.2 修改docker环境变量
+```bash
+cd yapi
+vi docker-compose.yml
+```
+
 > * docker-compose配置文件在[docker-compose.yml](docker-compose.yml)
 > * 注意有的参数带引号，有的不带引号
 
@@ -86,14 +94,14 @@ docker pull bewindoweb/yapi:latest
 | 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_PORT | 端口 | 9233 | - | |
-| YAPI_ADMIN_ACCOUNT | 管理员邮箱 | yapiAdmin@example.com | ✔ | |
-| YAPI_ADMIN_PASSWORD | 管理员密码 | yapiAdminPassword | ✔ | 【自定义配置】相比于原生yapi，增加了密码配置功能，可设置密码 |
-| YAPI_CLOSE_REGISTER | 是否关闭注册 | true | ✔ | |
+| YAPI_ADMIN_ACCOUNT | 管理员邮箱 | "yapiAdmin@example.com" | ✔ | |
+| YAPI_ADMIN_PASSWORD | 管理员密码 | "yapiAdminPassword" | ✔ | 【自定义配置】相比于原生yapi，增加了密码配置功能，可设置密码 |
+| YAPI_CLOSE_REGISTER | 是否关闭注册 | true | ✔ | 建议关闭注册（true），采用LDAP的形式登录 |
 | YAPI_VERSION | YAPI版本号 | 1.8.5 | - | 【自定义配置】目前仅作展示，暂不支持更新版本 |
 | YAPI_MODE | YAPI模式 | DEFAULT | ✔ | 【自定义配置】DEFAULT：第一次启动之后，之后的启动不再执行安装命令，修改配置将不会生效<br>REINSTALL：修改任意配置之后（比如改变管理员密码），重新安装一次 |
 
 #### 1.3.2.2 mongo数据库配置
-| 环境变量名 | 含义 | 默认值 | 是否建议修改 | 备注 |
+| 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_DB_CONNECT_STRING | MongoDB集群连接字符串 | 空 | ✔ | 如果mongo是单实例，则不用填写；如果是集群模式，则需要填写。<br>示例：mongodb://127.0.0.100:8418,127.0.0.101:8418,127.0.0.102:8418/yapidb?slaveOk=true |
 | YAPI_DB_SERVER_NAME | MongoDB URL或容器服务名 | mongo | ✔ | 需要确保容器能够访问到该mongo服务器地址 |
@@ -104,9 +112,9 @@ docker pull bewindoweb/yapi:latest
 | YAPI_DB_AUTH | MongoDB身份校验数据库名 | admin | - | |
 
 #### 1.3.2.3 邮箱配置
-| 环境变量名 | 含义 | 默认值 | 是否建议修改 | 备注 |
+| 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
-| YAPI_MAIL_ENABLE | 是否启用邮箱功能 | false | ✔ | |
+| YAPI_MAIL_ENABLE | 是否启用邮箱功能 | false | ✔ | 如果该项为false，则后面所有配置不生效 |
 | YAPI_MAIL_HOST | 邮箱服务器 | smtp.163.com | ✔ | |
 | YAPI_MAIL_PORT | 邮箱端口 | 465 | ✔ | |
 | YAPI_MAIL_FROM | 发件人邮箱 | yapiMailSender@163.com | ✔ | |
@@ -117,10 +125,10 @@ docker pull bewindoweb/yapi:latest
 
 
 #### 1.3.2.4 LDAP配置
-| 环境变量名 | 含义 | 默认值 | 是否建议修改 | 备注 |
+| 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
-| YAPI_LDAP_LOGIN_ENABLE | 是否支持LDAP登录 | false | ✔ | |
-| YAPI_LDAP_LOGIN_SERVER | LDAP服务器地址 | ldap://ldapServer:389 | ✔ | |
+| YAPI_LDAP_LOGIN_ENABLE | 是否支持LDAP登录 | false | ✔ | 如果该项为false，则后面所有配置不生效 |
+| YAPI_LDAP_LOGIN_SERVER | LDAP服务器地址 | ldap://ldapServer:389 | ✔ | 需要保证该LDAP服务器可以被容器访问 |
 | YAPI_LDAP_LOGIN_BASE_DN | LDAP服务器登录用户名 | - | ✔ | 示例：cn=Manager,dc=example,dc=com |
 | YAPI_LDAP_LOGIN_BIND_PASSWORD | 登录该LDAP服务器的密码 | - | ✔ | 示例：123456 |
 | YAPI_LDAP_LOGIN_SEARCH_DN | 查询用户数据的路径 | dc=example,dc=com | ✔ | |
@@ -132,7 +140,7 @@ docker pull bewindoweb/yapi:latest
 > [YAPI官方关于LDAP参数说明](https://hellosean1025.github.io/yapi/devops/index.html#%e9%85%8d%e7%bd%aeldap%e7%99%bb%e5%bd%95)
 
 #### 1.3.2.5 暂不支持的配置
-| 环境变量名 | 含义 | 默认值 | 是否建议修改 | 备注 |
+| 环境变量名 | 含义 | 默认值 | 是否建议关注或修改 | 备注 |
 | --- | --- | --- | --- | --- |
 | YAPI_PLUGIN | YAPI插件列表 | 空 | - | 目前安装插件会出现`ESLint Configuration not exist`的错误，暂未解决 |
 > [YAPI插件列表](https://www.npmjs.com/search?q=yapi-plugin-)
@@ -143,11 +151,38 @@ docker-compose -f docker-compose.yml up -d
 ```
 
 # 2 nginx代理
-nginx代理：推荐使用nginx将YAPI用https暴露出去。
+如果不是内网部署，推荐使用nginx代理：将YAPI以https的形式暴露出去。
+```
+server{
+    listen              443 ssl;
+    server_name         yapi.example.com;
+    ssl_certificate     www.example.com.crt;
+    ssl_certificate_key www.example.com.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    location / {
+        proxy_buffers 8 32k;
+        proxy_buffer_size 64k;
+        
+        # websocket
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+ 
+        client_max_body_size 500m;
+        proxy_pass http://localhost:9233;
+    }
+}
+```
 
 # 3 YAPI数据备份
 只需要备份mongo中的数据即可。  
-可以使用[backup/yapi_backup.sh](yapi_backup.sh)中的思路，参考文章[API集成管理平台YAPI的搭建和使用——YAPI7天备份脚本 | 三颗豆子](http://www.bewindoweb.com/222.html)
+可以使用[backup/yapi_backup.sh](yapi_backup.sh)中的思路，参考文章[API集成管理平台YAPI的搭建和使用——YAPI7天备份脚本 | 三颗豆子](http://www.bewindoweb.com/222.html)  
+仅需要添加一个定时任务：
+```
+crontab -e
+0 2 * * * /home/yapi/backup/yapi_backup.sh
+```
+后续将会考虑集成到镜像中（利用yapi的mongoose），目前由于需要集成mongodump，暂未实现docker化。
 
 # 4 相关链接
-* [YAPI Docker集成 | 三颗豆子](http://www.bewindoweb.com/222.html)
+* [YAPI Docker集成 | 三颗豆子](http://www.bewindoweb.com/279.html)
